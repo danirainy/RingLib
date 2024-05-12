@@ -11,6 +11,7 @@ internal class Control : MonoBehaviour
     private Vector2 originalColliderSize;
     private Vector2 originalHeroBoxColliderOffset;
     private Vector2 originalHeroBoxColliderSize;
+
     private void DestroyControlled()
     {
         if (!HasControlled)
@@ -20,6 +21,7 @@ internal class Control : MonoBehaviour
         }
         GameObject.Destroy(Controlled);
     }
+
     public void InstallControlled(GameObject gameObject)
     {
         if (HasControlled)
@@ -49,6 +51,7 @@ internal class Control : MonoBehaviour
         }
         Controlled = gameObject;
     }
+
     public void UninstallControlled()
     {
         if (!HasControlled)
@@ -70,6 +73,7 @@ internal class Control : MonoBehaviour
         heroBoxCollider.offset = originalHeroBoxColliderOffset;
         heroBoxCollider.size = originalHeroBoxColliderSize;
     }
+
     private void Update()
     {
         if (HasControlled)

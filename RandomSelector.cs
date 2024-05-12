@@ -6,6 +6,7 @@ internal class RandomSelectorItem<T>
     public float Weight { get; }
     public int MaxCount { get; }
     public int CurrentCount = 0;
+
     public RandomSelectorItem(T value, float weight, int maxCount)
     {
         Value = value;

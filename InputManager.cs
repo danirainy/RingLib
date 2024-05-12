@@ -13,10 +13,12 @@ internal class InputManager : MonoBehaviour
     public bool AttackPressed;
     private bool attackPressed;
     private HeroActions heroActions;
+
     public InputManager()
     {
         heroActions = HeroController.instance.Reflect().inputHandler.inputActions;
     }
+
     void Update()
     {
         if (leftPressed != heroActions.left.IsPressed)

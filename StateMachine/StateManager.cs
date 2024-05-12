@@ -4,10 +4,11 @@ namespace RingLib.StateMachine;
 
 internal class StateManager
 {
-    static Dictionary<Type, List<Type>> statesTypes;
+    private static Dictionary<Type, List<Type>> statesTypes;
+
     private static void CollectStates()
     {
-        statesTypes = new();
+        statesTypes = [];
         var stateMachineTypes = Assembly.GetExecutingAssembly().GetTypes().
             Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(StateMachine)));
         foreach (var stateMachineType in stateMachineTypes)
@@ -23,6 +24,7 @@ internal class StateManager
             statesTypes.Add(stateMachineType, stateTypes);
         }
     }
+
     public static Dictionary<string, StateBase> GetStates(Type type)
     {
         if (statesTypes == null)

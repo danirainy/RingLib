@@ -8,6 +8,7 @@ internal static class GameObjectExtension
     {
         return gameObject.transform.position;
     }
+
     public static void BroadcastEvent(this GameObject gameObject, string event_)
     {
         foreach (var stateMachine in gameObject.GetComponentsInChildren<StateMachine>())

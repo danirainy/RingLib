@@ -10,6 +10,7 @@ internal static class ComponentPatcher<T> where T : Component
     private static Dictionary<string, PropertyInfo> propertyDict = properties.ToDictionary(prop => prop.Name);
     private static FieldInfo[] fields = typeof(T).GetFields(flags);
     private static Dictionary<string, FieldInfo> fieldDict = fields.ToDictionary(field => field.Name);
+
     public static void Patch(T component, T other, HashSet<string> targets)
     {
         foreach (var target in targets)

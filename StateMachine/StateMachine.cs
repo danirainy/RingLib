@@ -4,12 +4,13 @@ namespace RingLib.StateMachine;
 
 internal class StateMachine : MonoBehaviour
 {
-    private static List<StateMachine> instances = new();
+    private static List<StateMachine> instances = [];
     private Dictionary<string, StateBase> states;
     public Type StartState;
     public string CurrentState { get; private set; }
-    private Dictionary<string, string> globalTransitions = new();
+    private Dictionary<string, string> globalTransitions = [];
     private CoroutineManager coroutineManager = new();
+
     public StateMachine(Type startState, Dictionary<string, Type> globalTransitions)
     {
         instances.Add(this);
@@ -24,11 +25,14 @@ internal class StateMachine : MonoBehaviour
             this.globalTransitions.Add(globalTransition.Key, globalTransition.Value.Name);
         }
     }
+
     protected virtual void StateMachineStart() { }
+
     private void Start()
     {
         StateMachineStart();
     }
+
     private string EnterCurrentState()
     {
         var state = states[CurrentState];
@@ -48,6 +52,7 @@ internal class StateMachine : MonoBehaviour
             return null;
         }
     }
+
     private void ExitCurrentState(bool interrupted)
     {
         var state = states[CurrentState];
@@ -55,6 +60,7 @@ internal class StateMachine : MonoBehaviour
         state.Exit(interrupted);
         coroutineManager.StopCoroutines();
     }
+
     private void SetState(string state, bool interrupted)
     {
         while (state != null)
@@ -73,6 +79,7 @@ internal class StateMachine : MonoBehaviour
             interrupted = false;
         }
     }
+
     public void SetState(Type State)
     {
         if (CurrentState == null)
@@ -82,7 +89,9 @@ internal class StateMachine : MonoBehaviour
         }
         SetState(State.Name, true);
     }
+
     protected virtual void StateMachineUpdate() { }
+
     private void Update()
     {
         if (CurrentState == null)
@@ -105,6 +114,7 @@ internal class StateMachine : MonoBehaviour
         Transit(states[CurrentState].Update());
         Transit(coroutineManager.UpdateCoroutines());
     }
+
     public void ReceiveEvent(string event_)
     {
         if (!globalTransitions.ContainsKey(event_))
@@ -119,11 +129,13 @@ internal class StateMachine : MonoBehaviour
         }
         SetState(globalTransitions[event_], true);
     }
+
     public static List<StateMachine> GetInstances()
     {
         instances.RemoveAll(instance => instance == null);
         return instances;
     }
+
     public static void BroadcastEvent(string event_)
     {
         foreach (var instance in GetInstances())
@@ -131,6 +143,7 @@ internal class StateMachine : MonoBehaviour
             instance.ReceiveEvent(event_);
         }
     }
+
     public void StartCoroutine(IEnumerator<Transition> coroutine)
     {
         coroutineManager.StartCoroutine(coroutine);

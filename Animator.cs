@@ -4,10 +4,10 @@ namespace RingLib;
 
 internal class Animator : MonoBehaviour
 {
-    public bool Finished;
     private UnityEngine.Animator animator;
     private Dictionary<string, float> clipLengths = [];
     private string currentAnimation;
+    public bool Finished;
     private AudioSource audioSource;
 
     private void Start()
