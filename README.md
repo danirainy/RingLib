@@ -64,7 +64,7 @@ internal class MyStateMachine : EntityStateMachine
     public RingLib.Animator Animator { get; private set; }
     public RingLib.InputManager InputManager { get; private set; }
 
-    public SeerStateMachine() : base(typeof(Idle), [])
+    public MyStateMachine() : base(typeof(Idle), [])
     {
         SpriteFacingLeft = true; // If using EntityStateMachine.Direction
     }
