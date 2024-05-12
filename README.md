@@ -62,7 +62,7 @@ internal class EvadeJump : State<MyStateMachine>
 internal class MyStateMachine : EntityStateMachine
 {
     public RingLib.Animator Animator { get; private set; }
-    public RingLib.InputManager InputManager;
+    public RingLib.InputManager InputManager { get; private set; }
     public SeerStateMachine() : base(typeof(Idle), [])
     {
         SpriteFacingLeft = true; // If using EntityStateMachine.Direction
