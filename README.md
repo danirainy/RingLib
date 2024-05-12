@@ -63,10 +63,12 @@ internal class MyStateMachine : EntityStateMachine
 {
     public RingLib.Animator Animator { get; private set; }
     public RingLib.InputManager InputManager { get; private set; }
+
     public SeerStateMachine() : base(typeof(Idle), [])
     {
         SpriteFacingLeft = true; // If using EntityStateMachine.Direction
     }
+
     protected override void EnemyStateMachineStart()
     {
         // A separate GameObject for animation is good for adjusting offsets
@@ -75,6 +77,7 @@ internal class MyStateMachine : EntityStateMachine
         // Accepts input for a controlled character
         InputManager = gameObject.AddComponent<RingLib.InputManager>();
     }
+
     protected override void EnemyStateMachineUpdate() {}
 }
 ```
