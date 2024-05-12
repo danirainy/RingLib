@@ -1,6 +1,6 @@
 # Introduction
 
-RingLib provides a lightweight state machine implementation ideal for developing mods, particularly modded bosses and controlled characters, in the game Hollow Knight. The typical use-case involves creating a custom StateMachine by inheriting from the RingLib state machine interface. Users also create custom states by inheriting from RingLib states. Developers would override member functions for each state to implement necessary actions and transitions.
+RingLib provides a lightweight state machine implementation ideal for developing mods, particularly modded bosses and controlled characters, in the game Hollow Knight. The typical use-case involves creating a custom StateMachine by inheriting from the RingLib state machine interface. Users also create custom states by inheriting from RingLib states and override member functions for each state to implement necessary actions and transitions.
 
 # Example State
 ```csharp
