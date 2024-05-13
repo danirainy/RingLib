@@ -1,7 +1,7 @@
 ﻿using HKMirror.Reflection;
 using UnityEngine;
 
-namespace RingLib;
+namespace RingLib.Components;
 
 internal class InputManager : MonoBehaviour
 {

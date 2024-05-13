@@ -1,4 +1,4 @@
-﻿namespace RingLib;
+﻿namespace RingLib.Utils;
 
 internal class RandomSelectorItem<T>
 {

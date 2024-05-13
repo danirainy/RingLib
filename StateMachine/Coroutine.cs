@@ -3,12 +3,12 @@ namespace RingLib.StateMachine;
 
 internal class Coroutine
 {
-    private IEnumerator<Transition> enumerator;
+    private IEnumerator<Transition> routine;
     private float time;
     private Func<bool> condition;
-    public Coroutine(IEnumerator<Transition> enumerator)
+    public Coroutine(IEnumerator<Transition> routine)
     {
-        this.enumerator = enumerator;
+        this.routine = routine;
         time = 0;
     }
     public Transition Update()
@@ -26,9 +26,9 @@ internal class Coroutine
             return new CurrentState();
         }
         condition = null;
-        if (enumerator.MoveNext())
+        if (routine.MoveNext())
         {
-            var transition = enumerator.Current;
+            var transition = routine.Current;
             if (transition is CurrentState || transition is ToState)
             {
                 return transition;

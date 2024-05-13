@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using UnityEngine;
 
-namespace RingLib;
+namespace RingLib.Utils;
 
 internal static class ComponentPatcher<T> where T : Component
 {

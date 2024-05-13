@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RingLib.Attack;
+namespace RingLib.Attacks;
 
 internal class Attack : MonoBehaviour
 {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RingLib;
+namespace RingLib.Components;
 
 internal class Control : MonoBehaviour
 {
@@ -19,7 +19,7 @@ internal class Control : MonoBehaviour
             Log.LogError(GetType().Name, "No Controlled to destroy");
             return;
         }
-        GameObject.Destroy(Controlled);
+        Destroy(Controlled);
     }
 
     public void InstallControlled(GameObject gameObject)

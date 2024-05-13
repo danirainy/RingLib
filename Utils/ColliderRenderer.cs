@@ -4,7 +4,7 @@ using GlobalEnums;
 using System.Reflection;
 using UnityEngine;
 
-namespace RingLib;
+namespace RingLib.Utils;
 
 internal class ColliderRenderer : MonoBehaviour
 {

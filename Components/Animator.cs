@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RingLib;
+namespace RingLib.Components;
 
 internal class Animator : MonoBehaviour
 {
