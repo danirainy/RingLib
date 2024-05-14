@@ -2,7 +2,16 @@
 
 RingLib provides a lightweight state machine implementation ideal for developing mods, particularly modded bosses and controlled characters, in the game Hollow Knight. The typical use-case involves creating a custom StateMachine by inheriting from the RingLib state machine interface. Users also create custom states by inheriting from RingLib states and override member functions for each state to implement necessary actions and transitions.
 
-# Tree of Coroutines
+# Feature List
+| Feature                                                       | Supported           |
+|---------------------------------------------------------------|---------------------|
+| State Machine Abstraction for Enemies & Controlled Characters | Yes                 |
+| In-State Coroutine Tree Support                               | Yes                 |
+| State Machine Integration with Unity Animator                 | Yes                 |
+| Various Dev Utils                                             | Yes                 |
+| Unity Editor Template for Hollow Knight Modding               | No (Use WeaverCore) |
+
+# Coroutine Tree
 
 Aside from the Update function in the State base class that can be overridden to perform actions and transitions, RingLib also provides extensive support for in-state coroutines. A coroutine is allowed to recursively call another coroutine. It is also allowed to spawn multiple coroutines at the same time at any level of the recursion. Parallel child coroutines will exit together if any of their siblings finish. This provides powerful building blocks for large and complex states.
 
