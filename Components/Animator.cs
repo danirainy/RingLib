@@ -9,7 +9,7 @@ internal class Animator : MonoBehaviour
     private Dictionary<string, float> clipLength = [];
 
     private string currentAnimation;
-    public bool Finished;
+    private bool finished;
 
     private AudioSource audioSource;
 
@@ -33,7 +33,7 @@ internal class Animator : MonoBehaviour
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (stateInfo.IsName(currentAnimation) && stateInfo.normalizedTime >= 1)
         {
-            Finished = true;
+            finished = true;
         }
     }
 
@@ -49,13 +49,13 @@ internal class Animator : MonoBehaviour
             Log.LogError(GetType().Name, "Animation not found");
             return null;
         }
-        Finished = false;
+        finished = false;
         currentAnimation = clipName;
         animator.Play(clipName, -1, 0);
 
         IEnumerator<Transition> routine()
         {
-            while (!Finished)
+            while (!finished)
             {
                 yield return new CurrentState();
             }
