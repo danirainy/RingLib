@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using RingLib.StateMachine;
+using UnityEngine;
 
 namespace RingLib.Components;
 
 internal class Animator : MonoBehaviour
 {
     private UnityEngine.Animator animator;
-    private Dictionary<string, float> clipLengths = [];
+    private Dictionary<string, float> clipLength = [];
 
     private string currentAnimation;
     public bool Finished;
@@ -18,18 +19,14 @@ internal class Animator : MonoBehaviour
         var clips = animator.runtimeAnimatorController.animationClips;
         foreach (var clip in clips)
         {
-            clipLengths[clip.name] = clip.isLooping ? float.MaxValue : clip.length;
+            clipLength[clip.name] = clip.isLooping ? float.MaxValue : clip.length;
         }
         audioSource = GetComponent<AudioSource>();
     }
 
     public void Update()
     {
-        if (currentAnimation == null)
-        {
-            return;
-        }
-        if (clipLengths[currentAnimation] == float.MaxValue)
+        if (currentAnimation == null || clipLength[currentAnimation] == float.MaxValue)
         {
             return;
         }
@@ -40,17 +37,30 @@ internal class Animator : MonoBehaviour
         }
     }
 
-    public float PlayAnimation(string clipName)
+    public float ClipLength(string clipName)
     {
-        if (!clipLengths.ContainsKey(clipName))
+        return clipLength[clipName];
+    }
+
+    public IEnumerator<Transition> PlayAnimation(string clipName)
+    {
+        if (!clipLength.ContainsKey(clipName))
         {
             Log.LogError(GetType().Name, "Animation not found");
-            return float.MaxValue;
+            return null;
         }
         Finished = false;
         currentAnimation = clipName;
         animator.Play(clipName, -1, 0);
-        return clipLengths[clipName];
+
+        IEnumerator<Transition> routine()
+        {
+            while (!Finished)
+            {
+                yield return new CurrentState();
+            }
+        }
+        return routine();
     }
 
     protected void PlaySound(AudioClip clip)
