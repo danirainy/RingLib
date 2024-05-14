@@ -8,7 +8,7 @@ Aside from the Update function in the State base class that can be overridden to
 
 # Example Evade Jump State
 ```csharp
-internal class EvadeJump : State<SeerStateMachine>
+internal class EvadeJump : State<MyStateMachine>
 {
     public override Transition Enter()
     {
