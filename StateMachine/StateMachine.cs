@@ -40,7 +40,7 @@ internal class StateMachine : MonoBehaviour
         var state = states[CurrentState];
         Log.LogInfo(GetType().Name, $"Entering state {state.GetType().Name}");
         var transition = state.Enter();
-        if (transition is CurrentState)
+        if (transition is NoTransition)
         {
             return null;
         }
@@ -103,7 +103,7 @@ internal class StateMachine : MonoBehaviour
         StateMachineUpdate();
         void Transit(Transition transition)
         {
-            if (transition is CurrentState) { }
+            if (transition is NoTransition) { }
             else if (transition is ToState toState)
             {
                 SetState(toState.State.Name, false);

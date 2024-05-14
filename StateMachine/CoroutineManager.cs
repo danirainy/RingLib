@@ -17,7 +17,7 @@ internal class CoroutineManager
             var transition = coroutine.Update();
             if (transition != null)
             {
-                if (transition is CurrentState)
+                if (transition is NoTransition)
                 {
                     newActiveCoroutines.Add(coroutine);
                 }
@@ -32,7 +32,7 @@ internal class CoroutineManager
             }
         }
         activeCoroutines = newActiveCoroutines;
-        return new CurrentState();
+        return new NoTransition();
     }
     public void StopCoroutines()
     {

@@ -16,7 +16,7 @@ internal class NailSlash : Attack
 
     private void Start()
     {
-        var damageHeroPrefab = Mod.GetPreloaded("GG_Sly/Battle Scene/Sly Boss/S1");
+        var damageHeroPrefab = Mod.GetPreloaded("GG_Sly", "Battle Scene/Sly Boss/S1");
         damageHero = Instantiate(damageHeroPrefab);
         damageHero.name = "DamageHero";
         damageHero.transform.parent = transform;

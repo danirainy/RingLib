@@ -6,15 +6,9 @@ namespace RingLib.StateMachine;
 
 internal class Transition { }
 
-internal class StateTransition : Transition
-{
-    public static StateTransition operator +(StateTransition a, StateTransition b)
-    {
-        return a is ToState ? a : b;
-    }
-}
+internal class StateTransition : Transition { }
 
-internal class CurrentState : StateTransition { }
+internal class NoTransition : StateTransition { }
 
 internal class ToState : StateTransition
 {
@@ -45,11 +39,26 @@ internal class WaitFor : CoroutineTransition
                 while (timer > 0)
                 {
                     timer -= Time.deltaTime;
-                    yield return new CurrentState();
+                    yield return new NoTransition();
                 }
             }
             Routines = [routine()];
         }
+    }
+}
+
+internal class WaitForever : CoroutineTransition
+{
+    public WaitForever()
+    {
+        IEnumerator<Transition> routine()
+        {
+            while (true)
+            {
+                yield return new NoTransition();
+            }
+        }
+        Routines = [routine()];
     }
 }
 
@@ -63,7 +72,7 @@ internal class WaitTill : CoroutineTransition
             {
                 while (!value())
                 {
-                    yield return new CurrentState();
+                    yield return new NoTransition();
                 }
             }
             Routines = [routine()];

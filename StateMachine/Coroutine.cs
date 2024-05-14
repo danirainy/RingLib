@@ -19,13 +19,20 @@ internal class Coroutine
         {
             return null;
         }
-        List<StateTransition> childrenTransition = children.Select(child => child.Update()).ToList();
-        if (childrenTransition.Any(transition => transition == null))
+        StateTransition stateTransition = new NoTransition();
+        foreach (var childTransition in children.Select(child => child.Update()))
         {
-            children = [];
-            return null;
+            if (childTransition == null)
+            {
+                children = [];
+                return null;
+            }
+            if (childTransition is ToState)
+            {
+                stateTransition = childTransition;
+            }
         }
-        return childrenTransition.Aggregate((a, b) => a + b);
+        return stateTransition;
     }
 
     public StateTransition Update()

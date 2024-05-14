@@ -8,14 +8,14 @@ internal class StateBase
 
     public virtual Transition Enter()
     {
-        return new CurrentState();
+        return new NoTransition();
     }
 
     public virtual void Exit(bool interrupted) { }
 
     public virtual Transition Update()
     {
-        return new CurrentState();
+        return new NoTransition();
     }
 
     public void StartCoroutine(IEnumerator<Transition> routine)

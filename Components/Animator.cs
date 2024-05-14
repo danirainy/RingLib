@@ -73,7 +73,7 @@ internal class Animator : MonoBehaviour
                 {
                     updater(NormalizedTime());
                 }
-                yield return new CurrentState();
+                yield return new NoTransition();
             }
         }
         return routine();

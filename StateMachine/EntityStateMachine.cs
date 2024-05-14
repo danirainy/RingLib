@@ -38,20 +38,20 @@ internal class EntityStateMachine : StateMachine
         this.spriteFacingLeft = spriteFacingLeft;
     }
 
-    protected virtual void EnemyStateMachineStart() { }
+    protected virtual void EntityStateMachineStart() { }
 
     protected sealed override void StateMachineStart()
     {
         BoxCollider2D = gameObject.GetComponent<BoxCollider2D>();
         Rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-        EnemyStateMachineStart();
+        EntityStateMachineStart();
     }
 
-    protected virtual void EnemyStateMachineUpdate() { }
+    protected virtual void EntityStateMachineUpdate() { }
 
     protected sealed override void StateMachineUpdate()
     {
-        EnemyStateMachineUpdate();
+        EntityStateMachineUpdate();
     }
 
     public float Direction()
