@@ -1,10 +1,11 @@
-﻿using HKMirror.Reflection;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RingLib.Components;
 
 internal class InputManager : MonoBehaviour
 {
+    public HeroActions HeroActions;
+
     public bool LeftPressed;
     private bool leftPressed;
     public bool RightPressed;
@@ -14,16 +15,9 @@ internal class InputManager : MonoBehaviour
     public bool AttackPressed;
     private bool attackPressed;
 
-    private HeroActions heroActions;
-
-    public InputManager()
-    {
-        heroActions = HeroController.instance.Reflect().inputHandler.inputActions;
-    }
-
     void Update()
     {
-        if (leftPressed != heroActions.left.IsPressed)
+        if (leftPressed != HeroActions.left.IsPressed)
         {
             if (!leftPressed)
             {
@@ -35,9 +29,9 @@ internal class InputManager : MonoBehaviour
                 LeftPressed = false;
                 RightPressed = rightPressed;
             }
-            leftPressed = heroActions.left.IsPressed;
+            leftPressed = HeroActions.left.IsPressed;
         }
-        if (rightPressed != heroActions.right.IsPressed)
+        if (rightPressed != HeroActions.right.IsPressed)
         {
             if (!rightPressed)
             {
@@ -49,12 +43,12 @@ internal class InputManager : MonoBehaviour
                 RightPressed = false;
                 LeftPressed = leftPressed;
             }
-            rightPressed = heroActions.right.IsPressed;
+            rightPressed = HeroActions.right.IsPressed;
         }
-        if (attackPressed != heroActions.attack.IsPressed)
+        if (attackPressed != HeroActions.attack.IsPressed)
         {
             AttackPressed = attackPressed;
-            attackPressed = heroActions.attack.IsPressed;
+            attackPressed = HeroActions.attack.IsPressed;
         }
     }
 }
