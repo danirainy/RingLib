@@ -1,4 +1,6 @@
-﻿namespace RingLib.StateMachine;
+﻿using System.Collections.Generic;
+
+namespace RingLib.StateMachine;
 
 internal class StateBase
 {

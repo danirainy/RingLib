@@ -1,4 +1,7 @@
-﻿namespace RingLib.StateMachine;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace RingLib.StateMachine;
 
 internal class Coroutine
 {
