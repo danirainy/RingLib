@@ -6,6 +6,7 @@ internal class Control : MonoBehaviour
 {
     public bool HasControlled { get; private set; }
     public GameObject Controlled { get; private set; }
+
     private float originalGravityScale;
     private Vector2 originalColliderOffset;
     private Vector2 originalColliderSize;

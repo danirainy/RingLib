@@ -6,10 +6,12 @@ namespace RingLib.Attacks;
 internal class NailSlash : Attack
 {
     public int DamageHero;
-    public int DamageEnemy;
     private GameObject damageHero;
+
+    public int DamageEnemy;
     private GameObject damageEnemy;
     private GameObject damageEnemyTinker;
+
     private Collider2D originalCollider;
 
     private void Start()

@@ -6,8 +6,10 @@ internal class Animator : MonoBehaviour
 {
     private UnityEngine.Animator animator;
     private Dictionary<string, float> clipLengths = [];
+
     private string currentAnimation;
     public bool Finished;
+
     private AudioSource audioSource;
 
     private void Start()

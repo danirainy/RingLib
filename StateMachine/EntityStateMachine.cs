@@ -28,10 +28,13 @@ internal class EntityStateMachine : StateMachine
             Rigidbody2D.velocity = value;
         }
     }
-    public bool SpriteFacingLeft;
+    private bool spriteFacingLeft;
 
-    public EntityStateMachine(Type startState, Dictionary<string, Type> globalTransitions)
-        : base(startState, globalTransitions) { }
+    public EntityStateMachine(Type startState, Dictionary<string, Type> globalTransitions, bool spriteFacingLeft)
+        : base(startState, globalTransitions)
+    {
+        this.spriteFacingLeft = spriteFacingLeft;
+    }
 
     protected virtual void EnemyStateMachineStart() { }
 
@@ -52,14 +55,7 @@ internal class EntityStateMachine : StateMachine
     public float Direction()
     {
         var direction = Mathf.Sign(gameObject.transform.localScale.x);
-        return SpriteFacingLeft ? -direction : direction;
-    }
-
-    public void Turn()
-    {
-        var localScale = gameObject.transform.localScale;
-        localScale.x *= -1;
-        gameObject.transform.localScale = localScale;
+        return spriteFacingLeft ? -direction : direction;
     }
 
     public bool Landed()

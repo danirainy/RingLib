@@ -10,8 +10,10 @@ internal class InputManager : MonoBehaviour
     public bool RightPressed;
     private bool rightPressed;
     public float Direction => LeftPressed ? -1 : RightPressed ? 1 : 0;
+
     public bool AttackPressed;
     private bool attackPressed;
+
     private HeroActions heroActions;
 
     public InputManager()

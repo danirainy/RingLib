@@ -1,53 +1,55 @@
-﻿using UnityEngine;
-namespace RingLib.StateMachine;
+﻿namespace RingLib.StateMachine;
 
 internal class Coroutine
 {
     private IEnumerator<Transition> routine;
-    private float time;
-    private Func<bool> condition;
+    private List<Coroutine> children = [];
+
     public Coroutine(IEnumerator<Transition> routine)
     {
         this.routine = routine;
-        time = 0;
     }
-    public Transition Update()
+
+    public StateTransition UpdateChildren()
     {
-        if (time > 0)
+        if (children.Count == 0)
         {
-            time -= Time.deltaTime;
-            if (time > 0)
+            return null;
+        }
+        List<StateTransition> childrenTransition = children.Select(child => child.Update()).ToList();
+        if (childrenTransition.Any(transition => transition == null))
+        {
+            children = [];
+            return null;
+        }
+        return childrenTransition.Aggregate((a, b) => a + b);
+    }
+
+    public StateTransition Update()
+    {
+        while (true)
+        {
+            var childrenTransition = UpdateChildren();
+            if (childrenTransition != null)
             {
-                return new CurrentState();
+                return childrenTransition;
             }
-        }
-        if (condition != null && !condition())
-        {
-            return new CurrentState();
-        }
-        condition = null;
-        if (routine.MoveNext())
-        {
+            if (!routine.MoveNext())
+            {
+                return null;
+            }
             var transition = routine.Current;
-            if (transition is CurrentState || transition is ToState)
+            if (transition is StateTransition stateTransition)
             {
-                return transition;
+                return stateTransition;
             }
-            else if (transition is WaitFor waitFor)
+            if (transition is CoroutineTransition composition)
             {
-                time = waitFor.Seconds;
-                return new CurrentState();
+                children = composition.Routines.Select(routine => new Coroutine(routine)).ToList();
+                continue;
             }
-            else if (transition is WaitTill waitTill)
-            {
-                condition = waitTill.Condition;
-                return new CurrentState();
-            }
-            else
-            {
-                Log.LogError(GetType().Name, $"Invalid transition {transition}");
-            }
+            Log.LogError(GetType().Name, $"Invalid transition {transition}");
+            return null;
         }
-        return null;
     }
 }
