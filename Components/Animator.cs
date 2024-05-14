@@ -31,7 +31,7 @@ internal class Animator : MonoBehaviour
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (stateInfo.IsName(currentAnimation))
         {
-            return stateInfo.normalizedTime;
+            return Mathf.Min(1, stateInfo.normalizedTime);
         }
         return 0;
     }
@@ -43,18 +43,13 @@ internal class Animator : MonoBehaviour
             return;
         }
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (NormalizedTime() >= 1)
+        if (NormalizedTime() == 1)
         {
             finished = true;
         }
     }
 
-    public float ClipLength(string clipName)
-    {
-        return clipLength[clipName];
-    }
-
-    public IEnumerator<Transition> PlayAnimation(string clipName, Action<float> updater = null)
+    public IEnumerator<Transition> PlayAnimation(string clipName, Func<float, Transition> updater = null)
     {
         if (!clipLength.ContainsKey(clipName))
         {
@@ -71,12 +66,17 @@ internal class Animator : MonoBehaviour
             {
                 if (updater != null)
                 {
-                    updater(NormalizedTime());
+                    yield return updater(NormalizedTime());
                 }
                 yield return new NoTransition();
             }
         }
         return routine();
+    }
+
+    public float ClipLength(string clipName)
+    {
+        return clipLength[clipName];
     }
 
     protected void PlaySound(AudioClip clip)
