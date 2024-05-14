@@ -137,6 +137,7 @@ internal class MyStateMachine : EntityStateMachine
         Animator = animation.GetComponent<RingLib.Animator>();
         // Accepts input for a controlled character
         InputManager = gameObject.AddComponent<RingLib.InputManager>();
+        InputManager.HeroActions = HeroController.instance.Reflect().inputHandler.inputActions;
     }
 
     protected override void EnemyStateMachineUpdate() {}
