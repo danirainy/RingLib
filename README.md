@@ -71,7 +71,10 @@ internal class Slash : State<MyStateMachine>
     {
         if (!StateMachine.FacingTarget())
         {
-            yield return new CoroutineTransition { Routine = StateMachine.Turn() };
+            yield return new CoroutineTransition
+            {
+                Routine = StateMachine.Turn()
+            };
         }
 
         var velocityX = (StateMachine.Target().Position().x - StateMachine.Position.x);
@@ -89,23 +92,28 @@ internal class Slash : State<MyStateMachine>
             {
                 velocityX *= -1;
                 StateMachine.Velocity *= -1;
-                yield return new CoroutineTransition { Routine = StateMachine.Turn() };
+                yield return new CoroutineTransition
+                {
+                    Routine = StateMachine.Turn()
+                };
             }
             var previousVelocityX = StateMachine.Velocity.x;
-            StateMachine.Animator.PlayAnimation(slash);
-            var duration = StateMachine.Animator.ClipLength(slash);
-            var timer = 0f;
-            while (timer < duration)
+            void updater(float normalizedTime)
             {
-                var currentVelocityX = Mathf.Lerp(previousVelocityX, velocityX, timer / duration);
+                var currentVelocityX = Mathf.Lerp(previousVelocityX, velocityX, normalizedTime);
                 StateMachine.Velocity = new Vector2(currentVelocityX, 0);
-                timer += Time.deltaTime;
-                yield return new CurrentState();
             }
+            yield return new CoroutineTransition
+            {
+                Routine = StateMachine.Animator.PlayAnimation(slash, updater)
+            };
         }
         foreach (var slash in new string[] { "Slash1", "Slash2", "Slash3" })
         {
-            yield return new CoroutineTransition { Routine = Slash(slash) };
+            yield return new CoroutineTransition
+            {
+                Routine = Slash(slash)
+            };
         }
 
         yield return new ToState { State = typeof(Idle) };
