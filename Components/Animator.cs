@@ -24,6 +24,16 @@ internal class Animator : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    private float NormalizedTime()
+    {
+        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName(currentAnimation))
+        {
+            return stateInfo.normalizedTime;
+        }
+        return 0;
+    }
+
     public void Update()
     {
         if (currentAnimation == null || clipLength[currentAnimation] == float.MaxValue)
@@ -31,7 +41,7 @@ internal class Animator : MonoBehaviour
             return;
         }
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.IsName(currentAnimation) && stateInfo.normalizedTime >= 1)
+        if (NormalizedTime() >= 1)
         {
             finished = true;
         }
@@ -42,7 +52,7 @@ internal class Animator : MonoBehaviour
         return clipLength[clipName];
     }
 
-    public IEnumerator<Transition> PlayAnimation(string clipName)
+    public IEnumerator<Transition> PlayAnimation(string clipName, Action<float> updater = null)
     {
         if (!clipLength.ContainsKey(clipName))
         {
@@ -57,6 +67,10 @@ internal class Animator : MonoBehaviour
         {
             while (!finished)
             {
+                if (updater != null)
+                {
+                    updater(NormalizedTime());
+                }
                 yield return new CurrentState();
             }
         }
