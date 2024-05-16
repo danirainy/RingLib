@@ -23,8 +23,8 @@ internal partial class MyStateMachine : EntityStateMachine
     private IEnumerator<Transition> EvadeJump()
     {
         // JumpStart
-        var jumpRadiusMin = Config.EvadeJumpRadiusMin;
-        var jumpRadiusMax = Config.EvadeJumpRadiusMax;
+        var jumpRadiusMin = config.EvadeJumpRadiusMin;
+        var jumpRadiusMax = config.EvadeJumpRadiusMax;
         var jumpRadius = UnityEngine.Random.Range(jumpRadiusMin, jumpRadiusMax);
         var targetXLeft = Target().Position().x - jumpRadius;
         var targetXRight = Target().Position().x + jumpRadius;
@@ -37,25 +37,25 @@ internal partial class MyStateMachine : EntityStateMachine
         {
             targetX = targetXLeft;
         }
-        var velocityX = (targetX - Position.x) * Config.EvadeJumpVelocityXScale;
+        var velocityX = (targetX - Position.x) * config.EvadeJumpVelocityXScale;
         if (Mathf.Sign(velocityX) != Direction())
         {
             yield return new CoroutineTransition { Routine = Turn() };
         }
-        yield return new CoroutineTransition { Routine = Animator.PlayAnimation("JumpStart") };
+        yield return new CoroutineTransition { Routine = animator.PlayAnimation("JumpStart") };
 
         // JumpAscend
-        Velocity = new Vector2(velocityX, Config.EvadeJumpVelocityY);
-        Animator.PlayAnimation("JumpAscend");
+        Velocity = new Vector2(velocityX, config.EvadeJumpVelocityY);
+        animator.PlayAnimation("JumpAscend");
         yield return new WaitTill { Condition = () => Velocity.y <= 0 };
 
         // JumpDescend
-        Animator.PlayAnimation("JumpDescend");
+        animator.PlayAnimation("JumpDescend");
         yield return new WaitTill { Condition = () => Landed() };
 
         // JumpEnd
         Velocity = Vector2.zero;
-        yield return new CoroutineTransition { Routine = Animator.PlayAnimation("JumpEnd") };
+        yield return new CoroutineTransition { Routine = animator.PlayAnimation("JumpEnd") };
         yield return new ToState { State = nameof(Attack) };
     }
 }
@@ -77,8 +77,8 @@ internal partial class MyStateMachine : EntityStateMachine
         }
 
         var velocityX = (Target().Position().x - Position.x);
-        velocityX *= Config.SlashVelocityXScale;
-        var minVelocityX = Config.ControlledSlashVelocityX;
+        velocityX *= config.SlashVelocityXScale;
+        var minVelocityX = config.ControlledSlashVelocityX;
         if (velocityX > -minVelocityX && velocityX < minVelocityX)
         {
             velocityX = Mathf.Sign(velocityX) * minVelocityX;
@@ -105,7 +105,7 @@ internal partial class MyStateMachine : EntityStateMachine
             }
             yield return new CoroutineTransition
             {
-                Routine = Animator.PlayAnimation(slash, updater)
+                Routine = animator.PlayAnimation(slash, updater)
             };
         }
         foreach (var slash in new string[] { "Slash1", "Slash2", "Slash3" })
@@ -125,8 +125,9 @@ internal partial class MyStateMachine : EntityStateMachine
 ```csharp
 internal partial class MyStateMachine : EntityStateMachine
 {
-    public RingLib.Animator Animator { get; private set; }
-    public RingLib.InputManager InputManager { get; private set; }
+    private Config config = new();
+    private RingLib.Animator animator;
+    private RingLib.InputManager inputManager;
 
     public MyStateMachine() : base(nameof(Idle), [], /*SpriteFacingLeft =*/true) {}
 
@@ -134,25 +135,25 @@ internal partial class MyStateMachine : EntityStateMachine
     {
         // A separate GameObject for animation is good for adjusting offsets
         var animation = gameObject.transform.Find("Animation");
-        Animator = animation.GetComponent<RingLib.Animator>();
+        animator = animation.GetComponent<RingLib.Animator>();
         // Accepts input for a controlled character
-        InputManager = gameObject.AddComponent<RingLib.InputManager>();
-        InputManager.HeroActions = HeroController.instance.Reflect().inputHandler.inputActions;
+        inputManager = gameObject.AddComponent<RingLib.InputManager>();
+        inputManager.HeroActions = HeroController.instance.Reflect().inputHandler.inputActions;
     }
 
     protected override void EnemyStateMachineUpdate() {}
 
-    public GameObject Target()
+    private GameObject Target()
     {
         return HeroController.instance.gameObject;
     }
 
-    public bool FacingTarget()
+    private bool FacingTarget()
     {
         return Mathf.Sign(Target().transform.position.x - transform.position.x) == Direction();
     }
 
-    public IEnumerator<Transition> Turn()
+    private IEnumerator<Transition> Turn()
     {
         var localScale = gameObject.transform.localScale;
         localScale.x *= -1;
