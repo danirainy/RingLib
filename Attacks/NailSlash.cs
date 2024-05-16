@@ -6,7 +6,7 @@ namespace RingLib.Attacks;
 internal class NailSlash : Attack
 {
     public int DamageHero;
-    private GameObject damageHero;
+    protected GameObject damageHero;
 
     public int DamageEnemy;
     private GameObject damageEnemy;
@@ -14,7 +14,7 @@ internal class NailSlash : Attack
 
     private Collider2D originalCollider;
 
-    private void Start()
+    protected void Start()
     {
         var damageHeroPrefab = Mod.GetPreloaded("GG_Sly", "Battle Scene/Sly Boss/S1");
         damageHero = Instantiate(damageHeroPrefab);
