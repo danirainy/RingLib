@@ -123,7 +123,7 @@ internal partial class MyStateMachine : EntityStateMachine
 
 # Example StateMachine
 ```csharp
-internal class MyStateMachine : EntityStateMachine
+internal partial class MyStateMachine : EntityStateMachine
 {
     public RingLib.Animator Animator { get; private set; }
     public RingLib.InputManager InputManager { get; private set; }
