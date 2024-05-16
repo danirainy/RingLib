@@ -13,19 +13,13 @@ RingLib provides a lightweight state machine implementation ideal for developing
 
 # Coroutine Tree
 
-Aside from the Update function in the State base class that can be overridden to perform actions and transitions, RingLib also provides extensive support for in-state coroutines. A coroutine is allowed to recursively call another coroutine. It is also allowed to spawn multiple coroutines at the same time at any level of the recursion. Parallel child coroutines will exit together if any of their siblings finish. This provides powerful building blocks for large and complex states.
+RingLib provides extensive support for in-state coroutines. All the state actions are expected to be done with coroutines instead of explicit Enter/Update/Exit functions. A coroutine is allowed to recursively call another coroutine. It is also allowed to spawn multiple coroutines at the same time at any level of the recursion. Parallel child coroutines will exit together if any of their siblings finish. This provides powerful building blocks for large and complex states.
 
 # Example Evade Jump State
 ```csharp
 internal class EvadeJump : State<MyStateMachine>
 {
-    public override Transition Enter()
-    {
-        StartCoroutine(Routine());
-        return new CurrentState();
-    }
-
-    private IEnumerator<Transition> Routine()
+    public override IEnumerator<Transition> Routine()
     {
         // JumpStart
         var jumpRadiusMin = StateMachine.Config.EvadeJumpRadiusMin;
@@ -70,13 +64,7 @@ internal class EvadeJump : State<MyStateMachine>
 ```csharp
 internal class Slash : State<MyStateMachine>
 {
-    public override Transition Enter()
-    {
-        StartCoroutine(Routine());
-        return new CurrentState();
-    }
-
-    private IEnumerator<Transition> Routine()
+    public override IEnumerator<Transition> Routine()
     {
         if (!StateMachine.FacingTarget())
         {

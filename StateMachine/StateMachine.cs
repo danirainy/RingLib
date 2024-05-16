@@ -11,7 +11,7 @@ internal class StateMachine : MonoBehaviour
     public Type StartState;
     public string CurrentState { get; private set; }
     private Dictionary<string, string> globalTransitions = [];
-    private CoroutineManager coroutineManager = new();
+    private Coroutine coroutine;
 
     public StateMachine(Type startState, Dictionary<string, Type> globalTransitions)
     {
@@ -28,18 +28,9 @@ internal class StateMachine : MonoBehaviour
         }
     }
 
-    protected virtual void StateMachineStart() { }
-
-    private void Start()
+    private string CoroutineUpdate()
     {
-        StateMachineStart();
-    }
-
-    private string EnterCurrentState()
-    {
-        var state = states[CurrentState];
-        Log.LogInfo(GetType().Name, $"Entering state {state.GetType().Name}");
-        var transition = state.Enter();
+        var transition = coroutine.Update();
         if (transition is NoTransition)
         {
             return null;
@@ -50,17 +41,28 @@ internal class StateMachine : MonoBehaviour
         }
         else
         {
-            Log.LogError(GetType().Name, $"Invalid transition");
+            Log.LogError(GetType().Name, $"Invalid transition type {transition.GetType().Name}");
             return null;
         }
+    }
+
+    private string EnterCurrentState()
+    {
+        var state = states[CurrentState];
+        Log.LogInfo(GetType().Name, $"Entering state {state.GetType().Name}");
+        coroutine = new Coroutine(state.Routine());
+        return CoroutineUpdate();
     }
 
     private void ExitCurrentState(bool interrupted)
     {
         var state = states[CurrentState];
         Log.LogInfo(GetType().Name, $"Exiting state {state.GetType().Name}");
-        state.Exit(interrupted);
-        coroutineManager.StopCoroutines();
+        coroutine = null;
+        if (interrupted)
+        {
+            state.Interrupt();
+        }
     }
 
     private void SetState(string state, bool interrupted)
@@ -86,10 +88,17 @@ internal class StateMachine : MonoBehaviour
     {
         if (CurrentState == null)
         {
-            Log.LogInfo(GetType().Name, $"StateMachine has not started yet");
+            Log.LogError(GetType().Name, "The state machine hasn't started yet");
             return;
         }
         SetState(State.Name, true);
+    }
+
+    protected virtual void StateMachineStart() { }
+
+    private void Start()
+    {
+        StateMachineStart();
     }
 
     protected virtual void StateMachineUpdate() { }
@@ -100,21 +109,15 @@ internal class StateMachine : MonoBehaviour
         {
             SetState(StartState.Name, false);
         }
-        StateMachineUpdate();
-        void Transit(Transition transition)
+        else
         {
-            if (transition is NoTransition) { }
-            else if (transition is ToState toState)
+            var nextState = CoroutineUpdate();
+            if (nextState != null)
             {
-                SetState(toState.State.Name, false);
-            }
-            else
-            {
-                Log.LogError(GetType().Name, $"Invalid transition");
+                SetState(nextState, false);
             }
         }
-        Transit(states[CurrentState].Update());
-        Transit(coroutineManager.UpdateCoroutines());
+        StateMachineUpdate();
     }
 
     public void ReceiveEvent(string event_)
@@ -126,7 +129,7 @@ internal class StateMachine : MonoBehaviour
         }
         if (CurrentState == null)
         {
-            Log.LogInfo(GetType().Name, $"StateMachine has not started yet");
+            Log.LogError(GetType().Name, "The state machine hasn't started yet");
             return;
         }
         SetState(globalTransitions[event_], true);
@@ -144,10 +147,5 @@ internal class StateMachine : MonoBehaviour
         {
             instance.ReceiveEvent(event_);
         }
-    }
-
-    public void StartCoroutine(IEnumerator<Transition> coroutine)
-    {
-        coroutineManager.StartCoroutine(coroutine);
     }
 }

@@ -6,27 +6,9 @@ internal class StateBase
 {
     public StateMachine StateMachine { get; set; }
 
-    public virtual Transition Enter()
-    {
-        return new NoTransition();
-    }
+    public virtual IEnumerator<Transition> Routine() { yield break; }
 
-    public virtual void Exit(bool interrupted) { }
-
-    public virtual Transition Update()
-    {
-        return new NoTransition();
-    }
-
-    public void StartCoroutine(IEnumerator<Transition> routine)
-    {
-        if (StateMachine == null)
-        {
-            Log.LogError(GetType().Name, $"StateMachine is null");
-            return;
-        }
-        StateMachine.StartCoroutine(routine);
-    }
+    public virtual void Interrupt() { }
 }
 internal class State<TStateMachine> : StateBase where TStateMachine : StateMachine
 {

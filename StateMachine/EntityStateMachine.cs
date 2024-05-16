@@ -82,4 +82,8 @@ internal class EntityStateMachine : StateMachine
         }
         return false;
     }
+
+    public virtual void OnHit() { }
+
+    public virtual void OnDeath() { }
 }

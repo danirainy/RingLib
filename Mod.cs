@@ -1,4 +1,6 @@
-﻿using RingLib.Components;
+﻿using Modding;
+using RingLib.Components;
+using RingLib.StateMachine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,35 +17,55 @@ internal class Mod : Modding.Mod
     ];
     private List<(string, string)> preloadNames;
     private static Dictionary<string, Dictionary<string, GameObject>> preloadedObjects;
+    private List<string> dependencies;
 
-    public Mod(string name, string version, List<(string, string)> preloadNames) : base(name)
+    public Mod(string name, string version, List<(string, string)> preloadNames, List<string> dependencies) : base(name)
     {
         Instance = this;
-        this.version = version;
-        this.preloadNames = internalPreloadNames.Concat(preloadNames).ToList();
 #if DEBUG
         RingLib.Log.LoggerInfo = Log;
 #endif
         RingLib.Log.LoggerError = LogError;
+        this.version = version;
+        this.preloadNames = internalPreloadNames.Concat(preloadNames).ToList();
+        this.dependencies = dependencies;
     }
 
     public sealed override string GetVersion() => version;
 
     public sealed override List<(string, string)> GetPreloadNames() => preloadNames;
 
-    private static void HeroControllerRegainControl(On.HeroController.orig_RegainControl orig, HeroController self)
-    {
-        var control = self.gameObject.GetComponent<Control>();
-        if (control != null && control.HasControlled)
-        {
-            return;
-        }
-        orig(self);
-    }
-
     private static void InstallHooks()
     {
-        On.HeroController.RegainControl += HeroControllerRegainControl;
+        On.HeroController.RegainControl += (orig, self) =>
+        {
+            var control = self.gameObject.GetComponent<Control>();
+            if (control != null && control.HasControlled)
+            {
+                return;
+            }
+            orig(self);
+        };
+
+        On.HealthManager.TakeDamage += (orig, self, damage) =>
+        {
+            var entityStateMachine = self.gameObject.GetComponent<EntityStateMachine>();
+            if (entityStateMachine != null)
+            {
+                entityStateMachine.OnHit();
+            }
+            orig(self, damage);
+        };
+
+        On.HealthManager.SendDeathEvent += (orig, self) =>
+        {
+            var entityStateMachine = self.gameObject.GetComponent<EntityStateMachine>();
+            if (entityStateMachine != null)
+            {
+                entityStateMachine.OnDeath();
+            }
+            orig(self);
+        };
     }
 
     public virtual void ModStart() { }
@@ -51,6 +73,11 @@ internal class Mod : Modding.Mod
     public sealed override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
     {
         Mod.preloadedObjects = preloadedObjects;
+        List<string> missing = dependencies.Where(dependency => ModHooks.GetMod(dependency) == null).ToList();
+        if (missing.Count > 0)
+        {
+            throw new Exception($"Missing dependencies: {string.Join(", ", missing)}");
+        }
         InstallHooks();
         ModStart();
     }
