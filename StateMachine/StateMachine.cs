@@ -58,7 +58,7 @@ internal class StateMachine : MonoBehaviour
         coroutine = null;
     }
 
-    protected void SetStateInternal(string state)
+    private void SetStateInternal(string state)
     {
         while (state != null)
         {

@@ -141,5 +141,23 @@ internal class MyStateMachine : EntityStateMachine
     }
 
     protected override void EnemyStateMachineUpdate() {}
+
+    public GameObject Target()
+    {
+        return HeroController.instance.gameObject;
+    }
+
+    public bool FacingTarget()
+    {
+        return Mathf.Sign(Target().transform.position.x - transform.position.x) == Direction();
+    }
+
+    public IEnumerator<Transition> Turn()
+    {
+        var localScale = gameObject.transform.localScale;
+        localScale.x *= -1;
+        gameObject.transform.localScale = localScale;
+        yield return new NoTransition();
+    }
 }
 ```
