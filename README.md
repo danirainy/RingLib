@@ -25,7 +25,7 @@ internal partial class MyStateMachine : EntityStateMachine
         // JumpStart
         var jumpRadiusMin = config.EvadeJumpRadiusMin;
         var jumpRadiusMax = config.EvadeJumpRadiusMax;
-        var jumpRadius = UnityEngine.Random.Range(jumpRadiusMin, jumpRadiusMax);
+        var jumpRadius = Random.Range(jumpRadiusMin, jumpRadiusMax);
         var targetXLeft = Target().Position().x - jumpRadius;
         var targetXRight = Target().Position().x + jumpRadius;
         float targetX;
@@ -51,7 +51,7 @@ internal partial class MyStateMachine : EntityStateMachine
 
         // JumpDescend
         animator.PlayAnimation("JumpDescend");
-        yield return new WaitTill { Condition = () => Landed() };
+        yield return new WaitTill { Condition = Landed };
 
         // JumpEnd
         Velocity = Vector2.zero;
