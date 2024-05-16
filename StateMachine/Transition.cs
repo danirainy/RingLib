@@ -12,7 +12,7 @@ internal class NoTransition : StateTransition { }
 
 internal class ToState : StateTransition
 {
-    public Type State;
+    public string State;
 }
 
 internal class CoroutineTransition : Transition

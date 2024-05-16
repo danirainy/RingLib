@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace RingLib.StateMachine;
@@ -32,7 +31,7 @@ internal class EntityStateMachine : StateMachine
     }
     private bool spriteFacingLeft;
 
-    public EntityStateMachine(Type startState, Dictionary<string, Type> globalTransitions, bool spriteFacingLeft)
+    public EntityStateMachine(string startState, Dictionary<string, string> globalTransitions, bool spriteFacingLeft)
         : base(startState, globalTransitions)
     {
         this.spriteFacingLeft = spriteFacingLeft;

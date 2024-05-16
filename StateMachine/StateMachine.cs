@@ -4,28 +4,26 @@ using UnityEngine;
 
 namespace RingLib.StateMachine;
 
+using State = Func<IEnumerator<Transition>>;
+
+[AttributeUsage(AttributeTargets.Method)]
+internal class StateAttribute : Attribute { }
+
 internal class StateMachine : MonoBehaviour
 {
     private static List<StateMachine> instances = [];
-    private Dictionary<string, StateBase> states;
-    public Type StartState;
+    private Dictionary<string, State> states;
+    public string StartState;
     public string CurrentState { get; private set; }
     private Dictionary<string, string> globalTransitions = [];
     private Coroutine coroutine;
 
-    public StateMachine(Type startState, Dictionary<string, Type> globalTransitions)
+    public StateMachine(string startState, Dictionary<string, string> globalTransitions)
     {
         instances.Add(this);
-        states = StateManager.GetStates(GetType());
-        foreach (var state in states.Values)
-        {
-            state.StateMachine = this;
-        }
+        states = StateCollector.GetStates(this);
         StartState = startState;
-        foreach (var globalTransition in globalTransitions)
-        {
-            this.globalTransitions.Add(globalTransition.Key, globalTransition.Value.Name);
-        }
+        this.globalTransitions = globalTransitions;
     }
 
     private string CoroutineUpdate()
@@ -37,7 +35,7 @@ internal class StateMachine : MonoBehaviour
         }
         else if (transition is ToState toState)
         {
-            return toState.State.Name;
+            return toState.State;
         }
         else
         {
@@ -49,23 +47,18 @@ internal class StateMachine : MonoBehaviour
     private string EnterCurrentState()
     {
         var state = states[CurrentState];
-        Log.LogInfo(GetType().Name, $"Entering state {state.GetType().Name}");
-        coroutine = new Coroutine(state.Routine());
+        Log.LogInfo(GetType().Name, $"Entering state {CurrentState}");
+        coroutine = new Coroutine(state());
         return CoroutineUpdate();
     }
 
-    private void ExitCurrentState(bool interrupted)
+    private void ExitCurrentState()
     {
-        var state = states[CurrentState];
-        Log.LogInfo(GetType().Name, $"Exiting state {state.GetType().Name}");
+        Log.LogInfo(GetType().Name, $"Exiting state {CurrentState}");
         coroutine = null;
-        if (interrupted)
-        {
-            state.Interrupt();
-        }
     }
 
-    private void SetState(string state, bool interrupted)
+    protected void SetStateInternal(string state)
     {
         while (state != null)
         {
@@ -76,22 +69,21 @@ internal class StateMachine : MonoBehaviour
             }
             if (CurrentState != null)
             {
-                ExitCurrentState(interrupted);
+                ExitCurrentState();
             }
             CurrentState = state;
             state = EnterCurrentState();
-            interrupted = false;
         }
     }
 
-    public void SetState(Type State)
+    public void SetState(string state)
     {
         if (CurrentState == null)
         {
             Log.LogError(GetType().Name, "The state machine hasn't started yet");
             return;
         }
-        SetState(State.Name, true);
+        SetStateInternal(state);
     }
 
     protected virtual void StateMachineStart() { }
@@ -107,14 +99,14 @@ internal class StateMachine : MonoBehaviour
     {
         if (CurrentState == null)
         {
-            SetState(StartState.Name, false);
+            SetStateInternal(StartState);
         }
         else
         {
             var nextState = CoroutineUpdate();
             if (nextState != null)
             {
-                SetState(nextState, false);
+                SetStateInternal(nextState);
             }
         }
         StateMachineUpdate();
@@ -132,7 +124,7 @@ internal class StateMachine : MonoBehaviour
             Log.LogError(GetType().Name, "The state machine hasn't started yet");
             return;
         }
-        SetState(globalTransitions[event_], true);
+        SetStateInternal(globalTransitions[event_]);
     }
 
     public static List<StateMachine> GetInstances()
