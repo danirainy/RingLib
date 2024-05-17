@@ -4,7 +4,7 @@ namespace RingLib.Attacks;
 
 internal class UnparryableNailSlash : NailSlash
 {
-    protected new void Start()
+    private new void Start()
     {
         base.Start();
         var fsm = damageHero.LocateMyFSM("nail_clash_tink");
