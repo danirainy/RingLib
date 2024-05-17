@@ -13,13 +13,16 @@ internal class Mod : Modding.Mod
     public static Mod Instance { get; private set; }
     private string version;
     private static List<(string, string)> internalPreloadNames = [
-        ("GG_Sly", "Battle Scene/Sly Boss/S1")
+        ("GG_Sly", "Battle Scene/Sly Boss/S1"),
+        ("GG_Grey_Prince_Zote", "Grey Prince")
     ];
     private List<(string, string)> preloadNames;
     private static Dictionary<string, Dictionary<string, GameObject>> preloadedObjects;
+    private Dictionary<string, string> translations;
     private List<string> dependencies;
 
-    public Mod(string name, string version, List<(string, string)> preloadNames, List<string> dependencies) : base(name)
+    public Mod(string name, string version, List<(string, string)> preloadNames,
+        Dictionary<string, string> translations, List<string> dependencies) : base(name)
     {
         Instance = this;
 #if DEBUG
@@ -28,6 +31,7 @@ internal class Mod : Modding.Mod
         RingLib.Log.LoggerError = LogError;
         this.version = version;
         this.preloadNames = internalPreloadNames.Concat(preloadNames).ToList();
+        this.translations = translations;
         this.dependencies = dependencies;
     }
 
@@ -65,6 +69,15 @@ internal class Mod : Modding.Mod
                 entityStateMachine.OnDeath();
             }
             orig(self);
+        };
+
+        ModHooks.LanguageGetHook += (key, sheetTitle, orig) =>
+        {
+            if (Instance.translations.ContainsKey(key))
+            {
+                return Instance.translations[key];
+            }
+            return orig;
         };
     }
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DreamEchoesCore.Submodules.RingLib.Utils;
+using HutongGames.PlayMaker.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RingLib.StateMachine;
@@ -30,6 +32,17 @@ internal class EntityStateMachine : StateMachine
         }
     }
     private bool spriteFacingLeft;
+
+    private static GameObject stunEffectPrefab;
+
+    static EntityStateMachine()
+    {
+        var greyPrince = Mod.GetPreloaded("GG_Grey_Prince_Zote", "Grey Prince");
+        var fsm = greyPrince.LocateMyFSM("Control");
+        var stunStart = fsm.GetState("Stun Start");
+        var action = stunStart.GetAction<SpawnObjectFromGlobalPool>(7);
+        stunEffectPrefab = action.gameObject.Value;
+    }
 
     public EntityStateMachine(string startState, Dictionary<string, string> globalTransitions, bool spriteFacingLeft)
         : base(startState, globalTransitions)
@@ -85,4 +98,10 @@ internal class EntityStateMachine : StateMachine
     public virtual void OnHit() { }
 
     public virtual void OnDeath() { }
+
+    protected void PlayStunEffect()
+    {
+        var stunEffect = Instantiate(stunEffectPrefab, Position, Quaternion.identity);
+        stunEffect.SetActive(true);
+    }
 }
