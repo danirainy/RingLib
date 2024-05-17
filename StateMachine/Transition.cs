@@ -17,8 +17,31 @@ internal class ToState : StateTransition
 
 internal class CoroutineTransition : Transition
 {
-    public IEnumerator<Transition>[] Routines;
-    public IEnumerator<Transition> Routine
+    public IEnumerator<Transition>[] RoutinesInternal;
+    public object[] Routines
+    {
+        set
+        {
+            List<IEnumerator<Transition>> routines = [];
+            foreach (var v in value)
+            {
+                if (v is IEnumerator<Transition> routine)
+                {
+                    routines.Add(routine);
+                }
+                else if (v is CoroutineTransition coroutineTransition)
+                {
+                    routines.AddRange(coroutineTransition.RoutinesInternal);
+                }
+                else
+                {
+                    Log.LogError(GetType().Name, $"Invalid routine type {v.GetType().Name}");
+                }
+            }
+            RoutinesInternal = routines.ToArray();
+        }
+    }
+    public object Routine
     {
         set
         {
@@ -42,7 +65,7 @@ internal class WaitFor : CoroutineTransition
                     yield return new NoTransition();
                 }
             }
-            Routines = [routine()];
+            Routine = routine();
         }
     }
 }
@@ -60,7 +83,7 @@ internal class WaitTill : CoroutineTransition
                     yield return new NoTransition();
                 }
             }
-            Routines = [routine()];
+            Routine = routine();
         }
     }
 }

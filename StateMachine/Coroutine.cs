@@ -55,7 +55,7 @@ internal class Coroutine
             }
             if (transition is CoroutineTransition coroutineTransition)
             {
-                children = coroutineTransition.Routines.Select(routine => new Coroutine(routine)).ToList();
+                children = coroutineTransition.RoutinesInternal.Select(routine => new Coroutine(routine)).ToList();
                 continue;
             }
             Log.LogError(GetType().Name, $"Invalid transition {transition}");
