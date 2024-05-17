@@ -29,7 +29,7 @@ internal class StateMachine : MonoBehaviour
     private string CoroutineUpdate()
     {
         var transition = coroutine.Update();
-        if (transition is NoTransition)
+        if (transition == null || transition is NoTransition)
         {
             return null;
         }

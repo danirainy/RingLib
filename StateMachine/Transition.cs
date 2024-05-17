@@ -47,21 +47,6 @@ internal class WaitFor : CoroutineTransition
     }
 }
 
-internal class WaitForever : CoroutineTransition
-{
-    public WaitForever()
-    {
-        IEnumerator<Transition> routine()
-        {
-            while (true)
-            {
-                yield return new NoTransition();
-            }
-        }
-        Routines = [routine()];
-    }
-}
-
 internal class WaitTill : CoroutineTransition
 {
     public Func<bool> Condition
