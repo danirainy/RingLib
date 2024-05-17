@@ -75,11 +75,10 @@ internal partial class MyStateMachine : EntityStateMachine
                 Routine = Turn()
             };
         }
-
         var velocityX = (Target().Position().x - Position.x);
         velocityX *= config.SlashVelocityXScale;
         var minVelocityX = config.ControlledSlashVelocityX;
-        if (velocityX > -minVelocityX && velocityX < minVelocityX)
+        if (Mathf.Abs(velocityX) < minVelocityX)
         {
             velocityX = Mathf.Sign(velocityX) * minVelocityX;
         }
