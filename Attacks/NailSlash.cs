@@ -7,6 +7,9 @@ internal class NailSlash : Attack
 {
     public int DamageHero;
     protected GameObject damageHero;
+    public delegate void ParryDelegate();
+    public ParryDelegate OnParry;
+    private bool onParryInstalled;
 
     public int DamageEnemy;
     private GameObject damageEnemy;
@@ -83,8 +86,16 @@ internal class NailSlash : Attack
     private void Update()
     {
         InstallColliderIfNotExist(damageHero);
+        if (!onParryInstalled)
+        {
+            onParryInstalled = true;
+            var fsm = damageHero.LocateMyFSM("nail_clash_tink");
+            var state = fsm.GetState("Pause Frame");
+            state.AddCustomAction(() => OnParry?.Invoke());
+        }
         InstallColliderIfNotExist(damageEnemy);
         InstallColliderIfNotExist(damageEnemyTinker);
+
         if (Hero)
         {
             damageHero.SetActive(false);
