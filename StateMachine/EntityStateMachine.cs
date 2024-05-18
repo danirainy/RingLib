@@ -1,5 +1,5 @@
-﻿using DreamEchoesCore.Submodules.RingLib.Utils;
-using HutongGames.PlayMaker.Actions;
+﻿using HutongGames.PlayMaker.Actions;
+using RingLib.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -86,8 +86,8 @@ internal class EntityStateMachine : StateMachine
         };
         for (var k = 0; k < 3; k++)
         {
-            RaycastHit2D raycastHit2D3 = Physics2D.Raycast(bottomRays[k], -Vector2.up, 0.05f, 1 << 8);
-            if (raycastHit2D3.collider != null)
+            var raycastHit2D = Physics2D.Raycast(bottomRays[k], -Vector2.up, 0.05f, 1 << 8);
+            if (raycastHit2D.collider != null)
             {
                 return true;
             }

@@ -1,7 +1,7 @@
 ﻿using HutongGames.PlayMaker;
 using System.Linq;
 
-namespace DreamEchoesCore.Submodules.RingLib.Utils;
+namespace RingLib.Utils;
 
 internal static class PlayMakerFSMExtension
 {
@@ -15,9 +15,13 @@ internal static class PlayMakerFSMExtension
         return state.Actions[index] as T;
     }
 
-    public static void RemoveAction(this FsmState state, int index)
+    public static void RemoveAction<T>(this FsmState state, int index) where T : FsmStateAction
     {
         var actions = state.Actions.ToList();
+        if (actions[index] is not T)
+        {
+            Log.LogError(typeof(PlayMakerFSMExtension).Name, $"Action at index {index} is not of type {typeof(T).Name}");
+        }
         actions.RemoveAt(index);
         state.Actions = actions.ToArray();
     }

@@ -15,6 +15,8 @@ internal class Animator : MonoBehaviour
 
     private AudioSource audioSource;
 
+    protected virtual void AnimatorStart() { }
+
     private void Start()
     {
         animator = GetComponent<UnityEngine.Animator>();
@@ -24,6 +26,7 @@ internal class Animator : MonoBehaviour
             clipLength[clip.name] = clip.isLooping ? float.MaxValue : clip.length;
         }
         audioSource = GetComponent<AudioSource>();
+        AnimatorStart();
     }
 
     private float NormalizedTime()
