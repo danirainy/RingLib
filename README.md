@@ -6,6 +6,7 @@ RingLib provides a lightweight state machine implementation ideal for developing
 | Feature                                                       | Supported           |
 |---------------------------------------------------------------|---------------------|
 | State Machine Abstraction for Enemies & Controlled Characters | Yes                 |
+| Global and In-State Event Support                             | Yes                 |
 | In-State Coroutine Tree Support                               | Yes                 |
 | State Machine Integration with Unity Animator                 | Yes                 |
 | Various Dev Utils                                             | Yes                 |
