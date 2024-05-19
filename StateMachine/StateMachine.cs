@@ -9,6 +9,8 @@ using State = Func<IEnumerator<Transition>>;
 [AttributeUsage(AttributeTargets.Method)]
 internal class StateAttribute : Attribute { }
 
+internal class Event { }
+
 internal class StateMachine : MonoBehaviour
 {
     private static List<StateMachine> instances = [];
@@ -16,10 +18,10 @@ internal class StateMachine : MonoBehaviour
     public string StartState;
     public string CurrentState { get; private set; }
     private Coroutine coroutine;
-    private HashSet<InStateEvent> inStateEvents = [];
-    private Dictionary<GlobalEvent, string> globalTransitions = [];
+    private HashSet<Event> inStateEvents = [];
+    private Dictionary<Event, string> globalTransitions = [];
 
-    public StateMachine(string startState, Dictionary<GlobalEvent, string> globalTransitions)
+    public StateMachine(string startState, Dictionary<Event, string> globalTransitions)
     {
         instances.Add(this);
         states = StateCollector.GetStates(this);
@@ -117,34 +119,34 @@ internal class StateMachine : MonoBehaviour
         StateMachineUpdate();
     }
 
-    protected bool CheckInStateEvent(InStateEvent inStateEvent)
+    protected bool CheckInStateEvent(Event event_)
     {
-        return inStateEvents.Contains(inStateEvent);
+        return inStateEvents.Contains(event_);
     }
 
     public void ReceiveEvent(Event event_)
     {
-        if (event_ is InStateEvent inStateEvent)
+        if (!globalTransitions.ContainsKey(event_))
         {
-            inStateEvents.Add(inStateEvent);
-        }
-        else if (event_ is GlobalEvent globalEvent)
-        {
-            if (!globalTransitions.ContainsKey(globalEvent))
-            {
-                Log.LogInfo(GetType().Name, $"No global transition for {globalEvent}");
-                return;
-            }
             if (CurrentState == null)
             {
-                Log.LogError(GetType().Name, "The state machine hasn't started yet");
-                return;
+                Log.LogInfo(GetType().Name, "The state machine hasn't started yet");
             }
-            SetStateInternal(globalTransitions[globalEvent]);
+            else
+            {
+                inStateEvents.Add(event_);
+            }
         }
         else
         {
-            Log.LogError(GetType().Name, $"Invalid event type {event_.GetType().Name}");
+            if (CurrentState == null)
+            {
+                Log.LogError(GetType().Name, "The state machine hasn't started yet");
+            }
+            else
+            {
+                SetStateInternal(globalTransitions[event_]);
+            }
         }
     }
 
@@ -154,7 +156,7 @@ internal class StateMachine : MonoBehaviour
         return instances;
     }
 
-    public static void BroadcastEvent(GlobalEvent event_)
+    public static void BroadcastEvent(Event event_)
     {
         foreach (var instance in GetInstances())
         {

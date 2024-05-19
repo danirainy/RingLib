@@ -8,7 +8,7 @@ internal class NailSlash : Attack
 {
     public int DamageHero;
     protected GameObject damageHero;
-    public static InStateEvent OnParryEvent = new();
+    public static StateMachine.Event OnParryEvent = new();
     private bool onParryInstalled;
 
     public int DamageEnemy;

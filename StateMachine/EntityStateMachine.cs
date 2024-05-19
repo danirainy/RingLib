@@ -44,7 +44,7 @@ internal class EntityStateMachine : StateMachine
         stunEffectPrefab = action.gameObject.Value;
     }
 
-    public EntityStateMachine(string startState, Dictionary<GlobalEvent, string> globalTransitions, bool spriteFacingLeft)
+    public EntityStateMachine(string startState, Dictionary<Event, string> globalTransitions, bool spriteFacingLeft)
         : base(startState, globalTransitions)
     {
         this.spriteFacingLeft = spriteFacingLeft;
