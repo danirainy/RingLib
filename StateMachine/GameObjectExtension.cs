@@ -9,11 +9,20 @@ internal static class GameObjectExtension
         return gameObject.transform.position;
     }
 
-    public static void BroadcastEvent(this GameObject gameObject, string event_)
+    public static void BroadcastEventInChildren(this GameObject gameObject, Event event_)
     {
         foreach (var stateMachine in gameObject.GetComponentsInChildren<StateMachine>())
         {
             stateMachine.ReceiveEvent(event_);
         }
+    }
+
+    public static void BroadcastEventInParent(this GameObject gameObject, Event event_)
+    {
+        while (gameObject.transform.parent != null)
+        {
+            gameObject = gameObject.transform.parent.gameObject;
+        }
+        gameObject.BroadcastEventInChildren(event_);
     }
 }

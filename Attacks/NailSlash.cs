@@ -1,4 +1,5 @@
-﻿using RingLib.Utils;
+﻿using RingLib.StateMachine;
+using RingLib.Utils;
 using UnityEngine;
 
 namespace RingLib.Attacks;
@@ -7,8 +8,7 @@ internal class NailSlash : Attack
 {
     public int DamageHero;
     protected GameObject damageHero;
-    public delegate void ParryDelegate();
-    public ParryDelegate OnParry;
+    public static InStateEvent OnParryEvent = new();
     private bool onParryInstalled;
 
     public int DamageEnemy;
@@ -91,7 +91,7 @@ internal class NailSlash : Attack
             onParryInstalled = true;
             var fsm = damageHero.LocateMyFSM("nail_clash_tink");
             var state = fsm.GetState("Pause Frame");
-            state.AddCustomAction(() => OnParry?.Invoke());
+            state.AddCustomAction(() => gameObject.BroadcastEventInParent(OnParryEvent));
         }
         InstallColliderIfNotExist(damageEnemy);
         InstallColliderIfNotExist(damageEnemyTinker);
