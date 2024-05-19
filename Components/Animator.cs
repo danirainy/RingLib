@@ -69,7 +69,12 @@ internal class Animator : MonoBehaviour
             {
                 if (updater != null)
                 {
-                    yield return updater(NormalizedTime());
+                    var tansition = updater(NormalizedTime());
+                    if (tansition == null)
+                    {
+                        break;
+                    }
+                    yield return tansition;
                 }
                 yield return new NoTransition();
             }
