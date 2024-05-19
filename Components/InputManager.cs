@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
 
 namespace RingLib.Components;
 
 internal class InputManager : MonoBehaviour
 {
-    public HeroActions HeroActions;
+    private HeroActions heroActions;
 
     public bool LeftPressed;
     private bool leftPressed;
@@ -15,9 +16,18 @@ internal class InputManager : MonoBehaviour
     public bool AttackPressed;
     private bool attackPressed;
 
-    void Update()
+    private void Start()
     {
-        if (leftPressed != HeroActions.left.IsPressed)
+        var heroControllerType = typeof(HeroController);
+        var inputHandlerField = heroControllerType.GetField(
+            "inputHandler", BindingFlags.NonPublic | BindingFlags.Instance);
+        var inputHandler = inputHandlerField.GetValue(HeroController.instance) as InputHandler;
+        heroActions = inputHandler.inputActions;
+    }
+
+    private void Update()
+    {
+        if (leftPressed != heroActions.left.IsPressed)
         {
             if (!leftPressed)
             {
@@ -29,9 +39,9 @@ internal class InputManager : MonoBehaviour
                 LeftPressed = false;
                 RightPressed = rightPressed;
             }
-            leftPressed = HeroActions.left.IsPressed;
+            leftPressed = heroActions.left.IsPressed;
         }
-        if (rightPressed != HeroActions.right.IsPressed)
+        if (rightPressed != heroActions.right.IsPressed)
         {
             if (!rightPressed)
             {
@@ -43,12 +53,12 @@ internal class InputManager : MonoBehaviour
                 RightPressed = false;
                 LeftPressed = leftPressed;
             }
-            rightPressed = HeroActions.right.IsPressed;
+            rightPressed = heroActions.right.IsPressed;
         }
-        if (attackPressed != HeroActions.attack.IsPressed)
+        if (attackPressed != heroActions.attack.IsPressed)
         {
+            attackPressed = heroActions.attack.IsPressed;
             AttackPressed = attackPressed;
-            attackPressed = HeroActions.attack.IsPressed;
         }
     }
 }

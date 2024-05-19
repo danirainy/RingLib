@@ -39,7 +39,7 @@ internal class Animator : MonoBehaviour
         return 0;
     }
 
-    public void Update()
+    private void Update()
     {
         if (currentAnimation == null || clipLength[currentAnimation] == float.MaxValue)
         {
