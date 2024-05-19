@@ -6,9 +6,10 @@ namespace RingLib.Attacks;
 
 internal class NailSlash : Attack
 {
+    public class ParryEvent : StateMachine.Event { }
+
     public int DamageHero;
     protected GameObject damageHero;
-    public static StateMachine.Event OnParryEvent = new();
     private bool onParryInstalled;
 
     public int DamageEnemy;
@@ -91,7 +92,7 @@ internal class NailSlash : Attack
             onParryInstalled = true;
             var fsm = damageHero.LocateMyFSM("nail_clash_tink");
             var state = fsm.GetState("Pause Frame");
-            state.AddCustomAction(() => gameObject.BroadcastEventInParent(OnParryEvent));
+            state.AddCustomAction(() => gameObject.BroadcastEventInParent(new ParryEvent()));
         }
         InstallColliderIfNotExist(damageEnemy);
         InstallColliderIfNotExist(damageEnemyTinker);

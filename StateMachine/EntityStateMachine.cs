@@ -1,5 +1,6 @@
 ﻿using HutongGames.PlayMaker.Actions;
 using RingLib.Utils;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,7 +45,8 @@ internal class EntityStateMachine : StateMachine
         stunEffectPrefab = action.gameObject.Value;
     }
 
-    public EntityStateMachine(string startState, Dictionary<Event, string> globalTransitions, bool spriteFacingLeft)
+    public EntityStateMachine(
+        string startState, Dictionary<Type, string> globalTransitions, bool spriteFacingLeft)
         : base(startState, globalTransitions)
     {
         this.spriteFacingLeft = spriteFacingLeft;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RingLib.StateMachine;
@@ -19,9 +20,9 @@ internal class StateMachine : MonoBehaviour
     public string CurrentState { get; private set; }
     private Coroutine coroutine;
     private HashSet<Event> inStateEvents = [];
-    private Dictionary<Event, string> globalTransitions = [];
+    private Dictionary<Type, string> globalTransitions = [];
 
-    public StateMachine(string startState, Dictionary<Event, string> globalTransitions)
+    public StateMachine(string startState, Dictionary<Type, string> globalTransitions)
     {
         instances.Add(this);
         states = StateCollector.GetStates(this);
@@ -119,14 +120,15 @@ internal class StateMachine : MonoBehaviour
         StateMachineUpdate();
     }
 
-    protected bool CheckInStateEvent(Event event_)
+    protected List<Event> CheckInStateEvent(Type type)
     {
-        return inStateEvents.Contains(event_);
+        return inStateEvents.Where(e => e.GetType() == type).ToList();
     }
 
     public void ReceiveEvent(Event event_)
     {
-        if (!globalTransitions.ContainsKey(event_))
+        var type = event_.GetType();
+        if (!globalTransitions.ContainsKey(type))
         {
             if (CurrentState == null)
             {
@@ -145,7 +147,7 @@ internal class StateMachine : MonoBehaviour
             }
             else
             {
-                SetStateInternal(globalTransitions[event_]);
+                SetStateInternal(globalTransitions[type]);
             }
         }
     }
