@@ -88,7 +88,8 @@ internal class EntityStateMachine : StateMachine
         };
         for (var k = 0; k < 3; k++)
         {
-            var raycastHit2D = Physics2D.Raycast(bottomRays[k], -Vector2.up, 0.05f, 1 << 8);
+            var raycastHit2D = Physics2D.Raycast(
+                bottomRays[k], -Vector2.up, 0.05f, 1 << LayerMask.NameToLayer("Terrain"));
             if (raycastHit2D.collider != null)
             {
                 return true;

@@ -14,7 +14,7 @@ internal class NailSlash : Attack
 
     public int DamageEnemy;
     private GameObject damageEnemy;
-    private GameObject damageEnemyTinker;
+    protected GameObject damageEnemyTinker;
 
     private Collider2D originalCollider;
 
@@ -95,19 +95,22 @@ internal class NailSlash : Attack
             state.AddCustomAction(() => gameObject.BroadcastEventInParent(new ParryEvent()));
         }
         InstallColliderIfNotExist(damageEnemy);
-        InstallColliderIfNotExist(damageEnemyTinker);
+        if (damageEnemyTinker != null)
+        {
+            InstallColliderIfNotExist(damageEnemyTinker);
+        }
 
         if (Hero)
         {
             damageHero.SetActive(false);
             damageEnemy.SetActive(true);
-            damageEnemyTinker.SetActive(true);
+            damageEnemyTinker?.SetActive(true);
         }
         else
         {
             damageHero.SetActive(true);
             damageEnemy.SetActive(false);
-            damageEnemyTinker.SetActive(false);
+            damageEnemyTinker?.SetActive(false);
         }
     }
 }
