@@ -22,6 +22,16 @@ internal class StateMachine : MonoBehaviour
     private HashSet<Event> inStateEvents = [];
     private Dictionary<Type, string> globalTransitions = [];
 
+    protected void LogInfo(string key, string message)
+    {
+        Log.LogInfo(key, message);
+    }
+
+    protected void LogError(string key, string message)
+    {
+        Log.LogError(key, message);
+    }
+
     public StateMachine(string startState, Dictionary<Type, string> globalTransitions)
     {
         instances.Add(this);
