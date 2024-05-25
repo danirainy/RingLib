@@ -120,9 +120,9 @@ internal class StateMachine : MonoBehaviour
         StateMachineUpdate();
     }
 
-    protected List<Event> CheckInStateEvent(Type type)
+    protected List<Event> CheckInStateEvent<T>() where T : Event
     {
-        return inStateEvents.Where(e => e.GetType() == type).ToList();
+        return inStateEvents.Where(e => e.GetType() == typeof(T)).ToList();
     }
 
     public void ReceiveEvent(Event event_)

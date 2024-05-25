@@ -129,7 +129,11 @@ internal partial class MyStateMachine : EntityStateMachine
     private RingLib.Animator animator;
     private RingLib.InputManager inputManager;
 
-    public MyStateMachine() : base(nameof(Idle), [], /*SpriteFacingLeft =*/true) {}
+    public MyStateMachine() : base(
+        startState: nameof(Idle),
+        globalTransitions: [],
+        spriteFacingLeft: true)
+    { }
 
     protected override void EnemyStateMachineStart()
     {

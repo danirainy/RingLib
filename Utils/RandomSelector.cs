@@ -8,8 +8,10 @@ internal class RandomSelectorItem<T>
     public float Weight { get; }
     public int MaxCount { get; }
     public int CurrentCount = 0;
+    public int MaxMiss { get; }
+    public int CurrentMiss = 0;
 
-    public RandomSelectorItem(T value, float weight, int maxCount)
+    public RandomSelectorItem(T value, float weight, int maxCount, int maxMiss)
     {
         Value = value;
         if (weight < 0)
@@ -18,6 +20,7 @@ internal class RandomSelectorItem<T>
         }
         Weight = weight;
         MaxCount = maxCount;
+        MaxMiss = maxMiss;
     }
 }
 
@@ -76,12 +79,33 @@ internal class RandomSelector<T>
         }
         if (candidates.Count == 0)
         {
-            Log.LogError(GetType().Name, "All keys have reached their max count");
+            Log.LogError(GetType().Name, "All items have reached their max count");
             candidates.Clear();
             for (int i = 0; i < items.Count; i++)
             {
                 candidates.Add(i);
             }
+        }
+        List<int> missedCandidates = [];
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            if (items[candidates[i]].CurrentMiss >= items[candidates[i]].MaxMiss)
+            {
+                missedCandidates.Add(candidates[i]);
+            }
+        }
+        if (missedCandidates.Count > 0)
+        {
+            if (missedCandidates.Count == 1)
+            {
+                var value = items[missedCandidates[0]].Value;
+                Log.LogInfo(GetType().Name, $"Only one item {value} has missed enough times, selecting it");
+            }
+            else
+            {
+                Log.LogInfo(GetType().Name, "Multiple items have missed enough times, selecting one randomly");
+            }
+            candidates = missedCandidates;
         }
         var randomIndex = GetRandomIndex(candidates);
         for (int i = 0; i < items.Count; i++)
@@ -89,10 +113,12 @@ internal class RandomSelector<T>
             if (i == randomIndex)
             {
                 ++items[i].CurrentCount;
+                items[i].CurrentMiss = 0;
             }
             else
             {
                 items[i].CurrentCount = 0;
+                ++items[i].CurrentMiss;
             }
         }
         return items[randomIndex].Value;

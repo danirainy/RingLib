@@ -26,6 +26,12 @@ internal class StateCollector
             {
                 if (method.GetCustomAttributes(typeof(StateAttribute), false).Length > 0)
                 {
+                    var forbiddenNames = new string[] { "Awake", "Start", "Update", "FixedUpdate" };
+                    if (forbiddenNames.Contains(method.Name))
+                    {
+                        Log.LogError(typeof(StateCollector).Name, $"Forbidden state name {method.Name}");
+                        continue;
+                    }
                     Log.LogInfo(typeof(StateCollector).Name, $"    Collected state {method.Name}");
                     statesPerStateMachine.Add(method.Name, method);
                 }
