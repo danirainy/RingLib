@@ -18,11 +18,10 @@ internal class Mod : Modding.Mod
     ];
     private List<(string, string)> preloadNames;
     private static Dictionary<string, Dictionary<string, GameObject>> preloadedObjects;
-    private Dictionary<string, string> translations;
     private List<string> dependencies;
 
     public Mod(string name, string version, List<(string, string)> preloadNames,
-        Dictionary<string, string> translations, List<string> dependencies) : base(name)
+        List<string> dependencies) : base(name)
     {
         Instance = this;
 #if DEBUG
@@ -31,13 +30,17 @@ internal class Mod : Modding.Mod
         RingLib.Log.LoggerError = LogError;
         this.version = version;
         this.preloadNames = internalPreloadNames.Concat(preloadNames).ToList();
-        this.translations = translations;
         this.dependencies = dependencies;
     }
 
     public sealed override string GetVersion() => version;
 
     public sealed override List<(string, string)> GetPreloadNames() => preloadNames;
+
+    public virtual string Translate(string key)
+    {
+        return null;
+    }
 
     private static void InstallHooks()
     {
@@ -73,9 +76,10 @@ internal class Mod : Modding.Mod
 
         ModHooks.LanguageGetHook += (key, sheetTitle, orig) =>
         {
-            if (Instance.translations.ContainsKey(key))
+            var translation = Instance.Translate(key);
+            if (translation != null)
             {
-                return Instance.translations[key];
+                return translation;
             }
             return orig;
         };
