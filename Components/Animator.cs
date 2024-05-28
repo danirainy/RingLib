@@ -89,6 +89,11 @@ internal class Animator : MonoBehaviour
 
     protected void PlaySound(AudioClip clip)
     {
+        if (clip == null)
+        {
+            Log.LogError(GetType().Name, "Clip not found");
+            return;
+        }
         audioSource.PlayOneShot(clip);
     }
 }
