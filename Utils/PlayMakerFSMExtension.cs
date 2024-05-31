@@ -46,4 +46,27 @@ internal static class PlayMakerFSMExtension
         actions.RemoveAt(index);
         state.Actions = actions.ToArray();
     }
+
+    // Credit to https://github.com/PrashantMohta/Satchel/blob/master/Futils/FsmUtils.cs
+    public static void RemoveTransition(this FsmState state, string onEventName)
+    {
+        var currTransitions = state.Transitions;
+        var transitions = new FsmTransition[currTransitions.Length - 1];
+        for (int i = 0, newPos = 0; i < currTransitions.Length; i++)
+        {
+            if (currTransitions[i].EventName != onEventName)
+            {
+                transitions[newPos] = currTransitions[i];
+                newPos++;
+            }
+        }
+        state.Transitions = transitions;
+    }
+
+    // Credit to https://github.com/PrashantMohta/Satchel/blob/master/Futils/FsmUtils.cs
+    public static void RemoveTransition(this PlayMakerFSM fsm, string fromStateName, string onEventName)
+    {
+        var state = fsm.Fsm.GetState(fromStateName);
+        state.RemoveTransition(onEventName);
+    }
 }
