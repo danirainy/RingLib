@@ -91,8 +91,11 @@ internal class NailSlash : Attack
         {
             onParryInstalled = true;
             var fsm = damageHero.LocateMyFSM("nail_clash_tink");
-            var state = fsm.GetState("Pause Frame");
-            state.AddCustomAction(() => gameObject.BroadcastEventInParent(new ParryEvent()));
+            if (fsm != null)
+            {
+                var state = fsm.GetState("Pause Frame");
+                state.AddCustomAction(() => gameObject.BroadcastEventInParent(new ParryEvent()));
+            }
         }
         InstallColliderIfNotExist(damageEnemy);
         if (damageEnemyTinker != null)
@@ -104,13 +107,19 @@ internal class NailSlash : Attack
         {
             damageHero.SetActive(false);
             damageEnemy.SetActive(true);
-            damageEnemyTinker?.SetActive(true);
+            if (damageEnemyTinker != null)
+            {
+                damageEnemyTinker.SetActive(true);
+            }
         }
         else
         {
             damageHero.SetActive(true);
             damageEnemy.SetActive(false);
-            damageEnemyTinker?.SetActive(false);
+            if (damageEnemyTinker != null)
+            {
+                damageEnemyTinker.SetActive(false);
+            }
         }
     }
 }
