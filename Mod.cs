@@ -37,7 +37,7 @@ internal class Mod : Modding.Mod
 
     public sealed override List<(string, string)> GetPreloadNames() => preloadNames;
 
-    public virtual string Translate(string key)
+    public virtual string Translate(string key, string sheetTitle)
     {
         return null;
     }
@@ -76,7 +76,7 @@ internal class Mod : Modding.Mod
 
         ModHooks.LanguageGetHook += (key, sheetTitle, orig) =>
         {
-            var translation = Instance.Translate(key);
+            var translation = Instance.Translate(key, sheetTitle);
             if (translation != null)
             {
                 return translation;
